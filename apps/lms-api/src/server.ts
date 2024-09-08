@@ -5,9 +5,10 @@ import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import { secureHeaders } from "hono/secure-headers";
 import { timing } from "hono/timing";
-import sampleRoutes from "./apps/sample/sample.route";
-import CONFIG from "./config";
-import { HttpStatusCode } from "./utils/constants";
+import categoryRouter from "@/apps/category/category.route";
+import sampleRoutes from "@/apps/sample/sample.route";
+import CONFIG from "@/config/index";
+import { HttpStatusCode } from "@/utils/constants";
 
 const app = new Hono();
 
@@ -29,6 +30,9 @@ app.get("/health", (c) => {
 
 app.route("/sample", sampleRoutes);
 
+// admin routes
+app.route("/categories", categoryRouter);
+
 // global routes
 app.notFound((c) => {
   return c.json(
@@ -36,18 +40,23 @@ app.notFound((c) => {
       success: false,
       message: `Route not found ${c.req.path}`,
     },
-    HttpStatusCode.NotFound,
+    HttpStatusCode.NotFound
   );
 });
 
-app.onError((err, c) => {
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+app.onError((err: any, c) => {
   console.error(`${err}`);
+  const statusCode = err.statusCode || HttpStatusCode.InternalServerError;
+  const errorMessage = err.message || "Internal Server Error";
+  const errorCode = err.errorCode || "unknown";
   return c.json(
     {
       success: false,
-      message: "Interal Server Error",
+      message: errorMessage,
+      code: errorCode,
     },
-    HttpStatusCode.InternalServerError,
+    statusCode
   );
 });
 

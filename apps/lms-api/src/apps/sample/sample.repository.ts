@@ -1,4 +1,4 @@
-import db from "../../db/drizzle";
+import db from "@/db/drizzle";
 import userTable, { type NewUser } from "./sample.schema";
 
 const create = async (user: NewUser) => {

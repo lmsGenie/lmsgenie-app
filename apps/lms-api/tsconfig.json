@@ -1,5 +1,12 @@
 {
   "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@/config/*":["config/*"],
+      "@/utils/*":["utils/*"],
+      "@/apps/*":["apps/*"],
+      "@/db/*":["db/*"],
+    },
     "strict": true,
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx"
